@@ -236,6 +236,23 @@ function cloneObject(object)
 }
 
 /**
+ * clone array
+ * @param Array array
+ * @returns Array
+ */
+function cloneArray(array)
+{
+    var newArray = new Array();
+
+    for (var index in array)
+    {
+        newArray[index] = typeof(array[index]) == "object" ? cloneArray(array[index]) : array[index];
+    }
+
+    return newArray;
+}
+
+/**
  * merge 2 object to a new object
  * @param   Object  obj1
  * @param   Object  obj2
