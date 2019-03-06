@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="renderer" content="webkit|ie-comp|ie-stand" />
+    <title>Green Reversi Game</title>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+    <div class="page">
+
+        <div class="page_body">
+            <div class="inner">
+
+                <div id="reversiGame">
+
+                    <div class="toolbar">
+
+                    </div>
+
+                    <div class="board">
+
+                        <table class="pieceArea skin" cellpadding="0" cellspacing="0">
+                            <tr v-for="row in 8">
+                                <td v-for="cell in 8" class="cell" width="12.5%" height="12.5%">
+                                    <div v-if="cellState[row-1][cell-1]==1" class="blackPiece piece"></div>
+                                    <div v-if="cellState[row-1][cell-1]==2" class="whitePiece piece"></div>
+                                </td>
+                            </tr>
+                        </table>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script src="asset/vue.2.5.16.js"></script>
+    <script src="game.js"></script>
+
+</body>
+</html>
+
