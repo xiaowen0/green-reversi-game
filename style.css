@@ -8,12 +8,12 @@
 }
 
 #reversiGame {
-    padding: 20px;
+    padding: 1rem;
 }
 
 #reversiGame .board {
-    width: 320px;
-    height: 320px;
+    width: 44rem;
+    height: 44rem;
     margin-left: auto;
     margin-right: auto;
     background-image: url(image/board.png);
@@ -21,30 +21,27 @@
     position: relative;
 
     box-shadow: black 1px 1px 5px;
+
+    cursor: pointer;
 }
 
-@media screen and (min-width: 1000px) {
+@media screen and (min-width: 640px) {
     #reversiGame .board {
-        width: 480px;
-        height: 480px;
-    }
-}
-
-@media screen and (min-width: 1200px) {
-    #reversiGame .board {
-        width: 640px;
-        height: 640px;
+        width: 22rem;
+        height: 22rem;
     }
 }
 
 #reversiGame .board .pieceArea {
-    padding: 20px;
+    padding: 2rem;
     width: 100%;
     height: 100%;
 }
 
-#reversiGame .board tr {
-
+@media screen and (min-width: 640px) {
+    #reversiGame .board .pieceArea {
+        padding: 1rem;
+    }
 }
 
 #reversiGame .cell {
@@ -65,6 +62,20 @@
     height: 88%;
     top: 6%;
     border-radius: 50%;
+
+    text-align: center;
+    line-height: 4rem;
+
+    font-weight: 700;
+    font-size: 3.2rem;
+    color: #ca0000;
+}
+
+@media screen and (min-width: 640px) {
+    #reversiGame .cell .piece {
+        line-height: 2rem;
+        font-size: 1.6rem;
+    }
 }
 
 #reversiGame .cell .blackPiece {
@@ -75,4 +86,87 @@
     background-color: white;
 }
 
+#reversiGame .horizontalTagContainner,
+#reversiGame .verticalTagContainner {
+    position: absolute;
+    left: 0;
+    top: 0;
+    color: #c7c763;
+    font-size: 1.6rem;
+}
+
+@media screen and (min-width: 640px) {
+    #reversiGame .horizontalTagContainner,
+    #reversiGame .verticalTagContainner {
+        font-size: 0.8rem;
+    }
+}
+
+#reversiGame .horizontalTagContainner {
+    z-index: 1;
+    width: 100%;
+    height: 2rem;
+}
+
+#reversiGame .verticalTagContainner {
+    z-index: 2;
+    width: 2rem;
+    height: 100%;
+}
+
+@media screen and (min-width: 640px) {
+    #reversiGame .horizontalTagContainner {
+        height: 1rem;
+    }
+
+    #reversiGame .verticalTagContainner {
+        width: 1rem;
+    }
+}
+
+#reversiGame .horizontalTagContainner .inner {
+    padding: 0 2rem;
+}
+
+#reversiGame .verticalTagContainner .inner {
+    padding: 2rem 0;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+@media screen and (min-width: 640px) {
+    #reversiGame .horizontalTagContainner .inner {
+        padding: 0 1rem;
+    }
+
+    #reversiGame .verticalTagContainner .inner {
+        padding: 1rem 0;
+    }
+}
+
+#reversiGame .horizontalTagContainner .tag {
+    display: inline-block;
+    width: 12.5%;
+    text-align: center;
+    line-height: 2rem;
+}
+
+#reversiGame .verticalTagContainner .tag {
+    display: block;
+    height: 12.5%;
+    text-align: center;
+    line-height: 1;
+    padding-top: 1.5rem;
+    box-sizing: border-box;
+}
+
+@media screen and (min-width: 640px) {
+    #reversiGame .horizontalTagContainner .tag {
+        line-height: 1rem;
+    }
+}
+
+#reversiGame .verticalTagContainner .tag {
+    padding-top: 0.75rem;
+}
 

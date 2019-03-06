@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:v-bind="http://www.w3.org/1999/xhtml" xmlns:v-on="http://www.w3.org/1999/xhtml">
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -7,7 +7,7 @@
     <title>Green Reversi Game</title>
     <link rel="stylesheet" href="style.css"/>
 </head>
-<body>
+<body data-base-width="480">
 
     <div class="page">
 
@@ -17,16 +17,35 @@
                 <div id="reversiGame">
 
                     <div class="toolbar">
-
+                        <button type="button" onclick="game.startGame()">start game</button>
                     </div>
 
                     <div class="board">
 
+                        <div class="horizontalTagContainner">
+                            <div class="inner">
+                                <span class="tag" v-for="tag in xCoordinate">{{tag}}</span>
+                            </div>
+                        </div>
+                        <div class="verticalTagContainner">
+                            <div class="inner">
+                                <span class="tag" v-for="tag in yCoordinate">{{tag}}</span>
+                            </div>
+                        </div>
+
                         <table class="pieceArea skin" cellpadding="0" cellspacing="0">
-                            <tr v-for="row in 8">
-                                <td v-for="cell in 8" class="cell" width="12.5%" height="12.5%">
+                            <tr v-for="row in verticalCellCount">
+                                <td v-for="cell in horizontalCellCount" class="cell" width="12.5%" height="12.5%"
+                                    v-bind:data-row="row" v-bind:data-cell="cell" v-on:click="onDown">
+
+                                    <!-- black piece -->
                                     <div v-if="cellState[row-1][cell-1]==1" class="blackPiece piece"></div>
+                                    <!-- white piece -->
                                     <div v-if="cellState[row-1][cell-1]==2" class="whitePiece piece"></div>
+
+                                    <!-- available cell -->
+                                    <div v-if="cellIsAvailable(row,cell)" class="piece">&times;</div>
+
                                 </td>
                             </tr>
                         </table>
@@ -39,7 +58,11 @@
 
     </div>
 
+    <script src="script/common_script/common_function.js"></script>
+    <script src="asset/jquery/jquery-3.1.0.min.js"></script>
     <script src="asset/vue.2.5.16.js"></script>
+
+    <script src="script/common_script/common_action.js"></script>
     <script src="game.js"></script>
 
 </body>
