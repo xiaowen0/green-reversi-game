@@ -1,0 +1,66 @@
+
+
+.dialog {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+
+  .dialog_header {
+    padding: 1.3em 1.6em 0.5em;
+    text-align: left;
+    background: none;
+    border: none;
+
+    .dialog_title {
+      margin: 0;
+      padding: 0;
+      font-size: 21px;
+      font-weight: 400;
+    }
+
+    .button_group {
+      margin: 0;
+    }
+  }
+
+  .dialog_body {
+    color: #808080;
+    padding: 0.25em 1.6em 2em;
+    font-size: 17px;
+    text-align: left;
+    line-height: 1.3;
+    word-wrap: break-word;
+    word-break: break-all;
+    min-height: 40px;
+  }
+
+  .dialog_footer {
+    text-align: right;
+    line-height: 42px;
+    font-size: 16px;
+    padding: 0 1.6em 0.7em;
+
+    .button {
+      vertical-align: top;
+      padding: 0 .8em;
+      flex: 1;
+      text-decoration: none;
+      border: none;
+
+      &:last-child {
+        margin-right: -0.8em;
+      }
+      &:active{
+        background-color: rgba(0,0,0,.06);
+      }
+      &:visited{
+        background-color: rgba(0,0,0,.06);
+      }
+
+      &.confirmButton {
+        color: #09BB07;
+      }
+
+    }
+  }
+}
