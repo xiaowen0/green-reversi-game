@@ -41,7 +41,18 @@ var game = (function(){
             [0, 0, 0, 0, 0, 0, 0, 0],
             [0, 0, 0, 0, 0, 0, 0, 0]
         ],
+        cellScoreMap : [
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 0, 0, 0, 0, 0, 0, 0]
+        ],
         colorNow: 1,
+        robot : null,
         computerColor : 2,
         availableCells: [],
         xCoordinate: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'],
@@ -62,6 +73,8 @@ var game = (function(){
         // log each place
         placeStack: [],
         view: null,
+
+        robotApi : null,
 
         init: function () {
             this.initView();
@@ -87,7 +100,8 @@ var game = (function(){
                     xCoordinate : me.xCoordinate,
                     yCoordinate : me.yCoordinate,
                     score : me.score,
-                    enableAssist : false
+                    enableAssist : false,
+                    showReferenceScore : false
                 },
                 methods : {
                     update : function(){
@@ -130,7 +144,6 @@ var game = (function(){
 
             // update view
             this.updateView();
-
         },
         /**
          * add Piece in a cell
@@ -177,10 +190,14 @@ var game = (function(){
             this.updateView();
 
             // vs computer
-            if (this.vsType == "vs_computer" && this.colorNow == this.computerColor)
-            {
-                window.setTimeout(this.computerAttack(), 700);
-            }
+            // if (this.vsType == "vs_computer" && this.colorNow == this.computerColor && typeof(this.robotApi)!=null)
+            // {
+            //     var robotApi = this.robotApi;
+            //     // window.setTimeout(this.computerAttack(), 700);
+            //     window.setTimeout(function(){
+            //         robotApi();
+            //     }, 1000);
+            // }
         },
         computeEatingCells : function (rowIndex, cellIndex, color)
         {
@@ -260,7 +277,7 @@ var game = (function(){
         /**
          * compute available cells by color
          * @param Number color
-         * @return Array
+         * @return Array([rowIndex, cellIndex])
          */
         computeAvailableCellsByColor : function (color)
         {
@@ -291,12 +308,26 @@ var game = (function(){
             var cellsReverseColor = this.computeAvailableCellsByColor(this.getReverseColorNumber(this.colorNow));
 
             // log
-            var availableText = '';
-            for (var i in this.availableCells) {
-                availableText += ' ' + this.availableCells[i].toString();
-            }
-            console.log('[info] available cells: ' + availableText);
+            // var availableText = '';
+            // for (var i in this.availableCells) {
+            //     availableText += ' ' + this.availableCells[i].toString();
+            // }
+            // console.log('[info] available cells: ' + availableText);
 
+            if (this.robot)
+            {
+                var cellScoreData = [];
+                for (var i in cells) {
+                    cellScoreData.push({
+                        rowIndex : cells[i][0],
+                        cellIndex : cells[i][1],
+                        score : this.robot.computeCellSuperiority(cells[i][0], cells[i][1], this.colorNow)
+                    });
+                }
+                this.updateScoreMap(cellScoreData);
+            }
+
+            // result
             var AvailableCells = [];
 
             // result and update action force
@@ -456,252 +487,46 @@ var game = (function(){
 
             this.score = [black,white];
         },
+        /**
+         *
+         * @param Array data  [Object{rowIndex, cellIndex, score}]
+         */
+        updateScoreMap : function (data)
+        {
+            // clean old cell score data
+            this.cellScoreMap = [
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0],
+                [0, 0, 0, 0, 0, 0, 0, 0]
+            ];
+
+            for (var i in data)
+            {
+                var item = data[i];
+                this.cellScoreMap[item.rowIndex - 1][item.cellIndex - 1] = item.score;
+            }
+        },
         updateView : function () {
             this.view.updateCellState(this.cellState);
             this.view.colorNow = this.colorNow;
             this.view.score = this.score;
         },
-        checkIfInternal : function () {
-
-        },
-        computerAttack : function () {
-            var cell = this.computeBestCell();
-            this.addPiece(cell.rowIndex, cell.cellIndex);
-        },
-        computeBestCell : function () {
-            var result = [];
-            var bestCell = null;
-            var bestScore = 0;
-
-            // computer all cell's superiority
-            for (var i=0; i<this.availableCells.length; i++)
-            {
-                result.push({
-                    rowIndex : this.availableCells[i][0],
-                    cellIndex : this.availableCells[i][1],
-                    superiority : this.computeCellSuperiority(this.availableCells[i][0], this.availableCells[i][1], this.colorNow)
-                });
-            }
-
-            for (var i=0; i<result.length; i++)
-            {
-                if (bestCell == null || result[i].superiority > bestScore)
-                {
-                    bestCell = result[i];
-                    bestScore = result[i].superiority;
-                }
-            }
-
-            return bestCell;
-        },
+        // computerAttack : function () {
+        //     var cell = this.computeBestCell();
+        //     this.addPiece(cell.rowIndex, cell.cellIndex);
+        // },
         /**
-         * compute cell's superiority
-         * @param rowIndex
-         * @param cellIndex
-         * @param color
-         * @return Number;
+         * call the api when need rebot
+         * @param Function RebotApi
          */
-        computeCellSuperiority : function (rowIndex, cellIndex, color)
-        {
-            var analysis = this.analyseCell(rowIndex, cellIndex, color);
+        registerRobotApi : function (robotApi) {
 
-            // approach center
-            var result = (6 - analysis.offsetToCenter) * 2;
-
-            // eat least
-            result += (8 - analysis.internalCellIncrease + analysis.externalCellIncrease) * 8;
-
-            // more internal cell
-            result += analysis.internalCellIncrease;
-
-            result -= analysis.externalCellIncrease * 4;
-
-            // least neighboring empty
-            result += 0 - 1 + (analysis.neighboringCount - analysis.neighboringEmptyCount) * 8;
-
-            if (analysis.isEdge)
-            {
-                result--;
-            }
-            if (analysis.isCorner)
-            {
-                result += this.actionForce[color-1];
-            }
-
-            // check if is special cell
-            if (   (rowIndex == 2 && cellIndex == 2)
-                || (rowIndex == 2 && cellIndex == 7)
-                || (rowIndex == 7 && cellIndex == 2)
-                || (rowIndex == 7 && cellIndex == 7)
-            )
-            {
-                result -= this.actionForce[this.getReverseColorNumber(color)-1];
-            }
-
-            // check if is last 2 line
-            if ( rowIndex == 2 || rowIndex == 7
-                || cellIndex == 2 || cellIndex == 7
-            )
-            {
-                result -= 2;
-            }
-
-            // neighboring less reverse
-            result -= (analysis.neighboringCount - analysis.neighboringReverseCount) * 2;
-
-            // neighboring less empty
-            result -= (analysis.neighboringCount - analysis.neighboringEmptyCount) + 8;
-
-            result += analysis.eatingCellScore;
-
-
-            return result;
-        },
-        /**
-         * analyse cell
-         * @param rowIndex
-         * @param cellIndex
-         * @param color
-         * @return {
-         *  neighboringCount, neighboringEmptyCount, neighboringEdgeCount, neighboringCornerCount, neighboringReverseCount
-         *  isInternal, isExternal,
-         *  internalCellIncrease, externalCellIncrease}
-         */
-        analyseCell : function (rowIndex, cellIndex, color)
-        {
-            var result = {};
-
-            // analyse offset to center
-            result.offsetToCenter = Math.abs(rowIndex-4) + Math.abs(cellIndex-4);
-
-            // check if is edge
-            if (rowIndex == 1 || rowIndex == 8
-                || cellIndex == 1 || cellIndex == 8
-            )
-            {
-                result.isEdge = true;
-            }
-            else
-            {
-                result.isEdge = false;
-            }
-
-            // check if is corner
-            if (   (rowIndex == 1 && cellIndex == 1)
-                || (rowIndex == 1 && cellIndex == 8)
-                || (rowIndex == 8 && cellIndex == 1)
-                || (rowIndex == 8 && cellIndex == 8)
-            )
-            {
-                result.isCorner = true;
-            }
-            {
-                result.isCorner = false;
-            }
-
-            // analyse neighboring, check neighboring empty cell, if is internal piece
-            var directions = this.directions;
-            var neighboringSituation = this.analyseCellNeighboringSituation(rowIndex, cellIndex);
-
-            result.neighboringCount = neighboringSituation.count;
-            result.neighboringReverseCount = neighboringSituation.reverse;
-            result.neighboringEmptyCount = neighboringSituation.empty;
-            result.neighboringEdgeCount = neighboringSituation.edge;
-            result.neighboringCornerCount = neighboringSituation.corner;
-
-            if (result.neighboringCount)
-            {
-                result.isInternal = false;
-                result.isExternal = true;
-            }
-            else
-            {
-                result.isInternal = true;
-                result.isExternal = false;
-            }
-
-            // analyse eating cell
-            var eatingCells = this.computeEatingCells(rowIndex, cellIndex, color);
-            result.internalCellIncrease = 0;
-            result.externalCellIncrease = 0;
-            result.eatingCellScore = 0;
-
-            for (var i=0; i<eatingCells.length; i++)
-            {
-                var eatingCellNeighboringSituation = this.analyseCellNeighboringSituation(eatingCells[i][0], eatingCells[i][1], color);
-                if (eatingCellNeighboringSituation.empty >= 1)
-                {
-                    result.externalCellIncrease++;
-                }
-                else
-                {
-                    result.internalCellIncrease++;
-                }
-
-                result.eatingCellScore += (eatingCellNeighboringSituation.reverse * 2 - eatingCellNeighboringSituation.count - eatingCellNeighboringSituation.empty);
-            }
-
-            return result;
-        },
-        analyseCellNeighboringSituation : function (rowIndex, cellIndex, color)
-        {
-            var directions = this.directions;
-            var neighboringEmptyCount = 0;
-            var result = {
-                count : 0,
-                empty : 0,
-                edge : 0,
-                corner : 0,
-                reverse : 0
-            };
-
-            for (var dirIndex=0; dirIndex<directions.length; dirIndex++)
-            {
-                var neighboringCell = [
-                    rowIndex+directions[dirIndex][0],
-                    cellIndex+directions[dirIndex][1]
-                ];
-
-                // out of area
-                if (neighboringCell[0] < 1 || neighboringCell[0] > 8
-                    || neighboringCell[1] < 1 || neighboringCell[1] > 8
-                )
-                {
-                    continue;
-                }
-
-                result.count++;
-                if (this.cellState[neighboringCell[0]-1][neighboringCell[1]-1] == 0)
-                {
-                    neighboringEmptyCount++;
-                }
-                else if (this.cellState[neighboringCell[0]-1][neighboringCell[1]-1] == this.getReverseColorNumber(color))
-                {
-                    result.reverse++;
-                }
-
-                // edge
-                if (neighboringCell[0] == 1 || neighboringCell[0] == 8
-                    || neighboringCell[1] == 1 || neighboringCell[1] == 8
-                )
-                {
-                    result.edge++;
-                }
-
-                // corner
-                if (   (neighboringCell[0] == 1 && neighboringCell[1] == 1)
-                    || (neighboringCell[0] == 1 && neighboringCell[1] == 8)
-                    || (neighboringCell[0] == 8 && neighboringCell[1] == 1)
-                    || (neighboringCell[0] == 8 && neighboringCell[1] == 8)
-                )
-                {
-                    result.corner++;
-                }
-
-            }
-            result.empty = neighboringEmptyCount;
-
-            return result;
+            this.robotApi = robotApi;
         }
     };
 

@@ -20,16 +20,6 @@
 
                     <div class="mb20">
                         <button class="button green" type="button" onclick="game.startGame()">start game</button>
-                        <label>
-                            <input class="checkbox" type="checkbox" v-model="enableAssist"/>
-                            Enable assist
-                        </label>
-                        <label>
-                            <select class="selectbox" v-model="game.vsType" v-on:change="onChangeVsType">
-                                <option value="vs_player">vs player</option>
-                                <option value="vs_computer">vs computer</option>
-                            </select>
-                        </label>
                         now: {{colorNow == 1 ? 'Black' : 'White'}}
                     </div>
 
@@ -57,7 +47,10 @@
                                     <div v-if="cellState[row-1][cell-1]==2" class="whitePiece piece"></div>
 
                                     <!-- available cell -->
-                                    <div v-if="cellIsAvailable(row,cell)" class="piece">&times;</div>
+                                    <div v-if="cellIsAvailable(row,cell)" class="piece">
+                                        <span v-if="!showReferenceScore">&times;</span>
+                                        <span class="score" v-if="showReferenceScore">{{game.cellScoreMap[row-1][cell-1]}}</span>
+                                    </div>
 
                                 </td>
                             </tr>
@@ -65,7 +58,7 @@
 
                     </div>
 
-                    <div class="scoreContainner">
+                    <div class="scoreContainner mb20">
                         <table border="1" cellspacing="0" cellpadding="8">
                             <tr>
                                 <th>player</th>
@@ -91,6 +84,23 @@
                         </table>
                     </div>
 
+                    <div>
+                        <label>
+                            <input class="checkbox" type="checkbox" v-model="enableAssist"/>
+                            Enable assist
+                        </label>
+                        <label>
+                            <input class="checkbox" type="checkbox" v-model="showReferenceScore"/>
+                            Show reference score:
+                        </label>
+                        <label>
+                            <select class="selectbox" v-model="game.vsType" v-on:change="onChangeVsType">
+                                <option value="vs_player">vs player</option>
+                                <option value="vs_computer">vs computer</option>
+                            </select>
+                        </label>
+                    </div>
+
                 </div>
 
             </div>
@@ -104,6 +114,7 @@
 
     <script src="script/common_script/common_action.js"></script>
     <script src="game.js"></script>
+    <script src="robot2.js"></script>
 
 </body>
 </html>

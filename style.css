@@ -89,6 +89,10 @@
     background-color: white;
 }
 
+#reversiGame .cell .score {
+    color: #2ecc71;
+}
+
 #reversiGame .horizontalTagContainner,
 #reversiGame .verticalTagContainner {
     position: absolute;
