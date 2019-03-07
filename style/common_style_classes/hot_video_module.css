@@ -1,0 +1,21 @@
+/* hot video module */
+
+.hot_video.module {
+    background-color: #FFF;
+    padding: 20px;
+}
+
+.hot_video.module .video_list {
+    list-style: none;
+    padding-left: 0;
+    overflow: hidden;
+    clear: both;
+}
+
+.hot_video.module .video_list li {
+    float: left;
+    box-sizing: border-box;
+    width: 200px;
+    margin-bottom: 20px;
+    margin-right: 20px;
+}

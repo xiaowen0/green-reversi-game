@@ -1,0 +1,66 @@
+/* video player */
+
+.videoPlayer {
+    position: relative;
+    z-index: 1;
+    overflow: hidden;
+}
+
+.videoPlayer .videoPlayArea,
+.videoPlayer .playlist {
+    float: left;
+    height: 100%;
+    overflow: auto;
+}
+
+.videoPlayer .videoPlayArea {
+    width: 100%;
+    background-color: #000;
+    position: relative;
+    z-index: 2;
+}
+
+.videoPlayer .playlist {
+    background-color: #191919;
+    position: absolute;
+    z-index: 1;
+    right: 0;
+    top: 0;
+}
+
+.videoPlayer .videoPlayArea .videoController {
+    width: 100%;
+    height: 100%;
+}
+
+.videoPlayer .videoPlayArea .buttonBar {
+    padding: 10px;
+}
+
+.videoPlayer.showPlayList .videoPlayArea {
+    width: 75%;
+}
+
+.videoPlayer.showPlayList .playlist {
+    width: 25%;
+}
+
+.videoPlayer.showPlayList .playlist li {
+    padding: 20px;
+    border-bottom: solid 1px #484848;
+}
+
+.videoPlayer.showPlayList .playlist li:last-child {
+    border-bottom: none 0;
+}
+
+.videoPlayer.showPlayList .playlist ul {
+    list-style: none none;
+    padding-left: 0;
+}
+
+.videoPlayer.showPlayList .playlist li a,
+.videoPlayer.showPlayList .playlist li a:active,
+.videoPlayer.showPlayList .playlist li a:visited {
+    color: #FFF;
+}

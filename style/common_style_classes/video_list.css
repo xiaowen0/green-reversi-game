@@ -1,0 +1,49 @@
+/* video content */
+.video_list_container {
+    clear: both;
+    overflow: hidden;
+}
+
+.video_list_container .video_item {
+
+    float: left;
+    background-color: #FFF;
+    padding: 20px;
+
+    margin-right: 20px;
+    margin-bottom: 20px;
+}
+
+.video_list_container .video_item .inner {
+    width: 200px;
+}
+
+.video_list_container .video_item .image_box {
+    height: 112px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.video_list_container .video_item .image_box img {
+    width: 100%;
+    height: auto;
+}
+
+.video_list_container .video_item .title_box {
+
+    line-height: 20px;
+    height: 40px;
+
+    margin-bottom: 10px;
+    margin-top: 0;
+
+    overflow: hidden;
+
+    font-size: 14px;
+
+}
+
+.video_list_container .video_list .video_item .watch_box {
+    font-size: 13px;
+}
+
