@@ -2,7 +2,11 @@
  * Created by Kevin on 2019/3/6.
  */
 
-// @var Object
+/**
+ * Game Controller
+ * view control use Vue
+ * @var Object
+ */
 var game = (function(){
 
     return {
@@ -45,6 +49,9 @@ var game = (function(){
         ],
         // action force for black and white
         actionForce: [4, 4],
+
+        internalPieceCount : [0,0],
+        externalPieceCount : [2,2],
         // score
         score : [2, 2],
         // log each place
@@ -52,7 +59,41 @@ var game = (function(){
         view: null,
 
         init: function () {
+            this.initView();
             this.startGame();
+        },
+        initView : function () {
+            var me = this;
+            this.view = new Vue({
+                el : '#reversiGame',
+                data : {
+                    horizontalCellCount : me.horizontalCellCount,
+                    verticalCellCount : me.verticalCellCount,
+                    cellState : me.cellState,
+                    game : me,
+                    colorNow : me.colorNow,
+                    xCoordinate : me.xCoordinate,
+                    yCoordinate : me.yCoordinate,
+                    score : me.score,
+                    enableAssist : false
+                },
+                methods : {
+                    update : function(){
+
+                    },
+                    updateCellState : function(data){
+                        this.cellState = data;
+                    },
+                    onDown : function (event){
+                        var rowIndex = parseInt(event.currentTarget.dataset.row);
+                        var cellIndex = parseInt(event.currentTarget.dataset.cell);
+                        this.game.addPiece(rowIndex, cellIndex);
+                    },
+                    cellIsAvailable : function (rowIndex, cellIndex){
+                        return this.game.canAddPiece(rowIndex, cellIndex);
+                    }
+                }
+            });
         },
         startGame: function ()
         {
@@ -62,14 +103,13 @@ var game = (function(){
             // black first
             this.colorNow = this.blackPieceNumber;
 
-            // update score
-            this.updateScore();
+            // init score 2:2
+            this.score = [2,2];
 
-            //
-            this.updateAvailableCells();
+            // this action include computing action force
+            this.computeAvailableCells();
 
-            // check action force
-            this.checkActionForce();
+            // compute action force
 
             // update view
             this.updateView();
@@ -80,14 +120,15 @@ var game = (function(){
          * @param Number rowIndex
          * @param Number cellIndex
          */
-        addPiece: function (rowIndex, cellIndex) {
+        addPiece: function (rowIndex, cellIndex)
+        {
             // update current cell and other pieces
             if (!this.canAddPiece(rowIndex, cellIndex)) {
                 console.log('[info] current cell not allow place.');
                 return;
             }
 
-            // update cell
+            // set color in cell
             this.cellState[rowIndex - 1][cellIndex - 1] = this.colorNow;
 
             // eat
@@ -147,8 +188,8 @@ var game = (function(){
             // update score
             this.updateScore();
 
-            // update available cells
-            this.updateAvailableCells();
+            // computer available cells, including compute action force
+            this.computeAvailableCells();
 
             // check action
             this.checkActionForce();
@@ -183,29 +224,63 @@ var game = (function(){
 
             return available;
         },
-        updateAvailableCells: function () {
-            this.availableCells = [];
+        /**
+         * compute available cells by color
+         * @param Number color
+         * @return Array
+         */
+        computeAvailableCellsByColor : function (color)
+        {
+            var availableCells = [];
             var result = false;
 
+            // traversal each cell
             for (var rowIndex = 1; rowIndex <= 8; rowIndex++) {
-                for (var cellIndex = 1; cellIndex <= 8; cellIndex++) {
+                for (var cellIndex = 1; cellIndex <= 8; cellIndex++)
+                {
                     // filter empty cell
                     if (this.cellState[rowIndex - 1][cellIndex - 1] != 0) {
                         continue;
                     }
 
-                    result = this.checkCellAvailable(rowIndex, cellIndex, this.colorNow);
+                    result = this.checkCellAvailable(rowIndex, cellIndex, color);
                     if (result) {
-                        this.availableCells.push([rowIndex, cellIndex]);
+                        availableCells.push([rowIndex, cellIndex]);
                     }
                 }
             }
 
+            return availableCells;
+        },
+        computeAvailableCells: function () {
+
+            var cells = this.availableCells = this.computeAvailableCellsByColor(this.colorNow);
+            var cellsReverseColor = this.computeAvailableCellsByColor(this.getReverseColorNumber(this.colorNow));
+
+            // log
             var availableText = '';
             for (var i in this.availableCells) {
                 availableText += ' ' + this.availableCells[i].toString();
             }
             console.log('[info] available cells: ' + availableText);
+
+            var AvailableCells = [];
+
+            // result and update action force
+            if (this.colorNow == 1)
+            {
+                AvailableCells[0] = cells;
+                AvailableCells[1] = cellsReverseColor;
+                this.actionForce = [cells.length, cellsReverseColor.length];
+            }
+            else
+            {
+                AvailableCells[0] = cellsReverseColor;
+                AvailableCells[1] = cells;
+                this.actionForce = [cellsReverseColor.length, cells.length];
+            }
+
+            return AvailableCells;
         },
         // check a cell if allow
         checkCellAvailable: function (rowIndex, cellIndex, colorNumber) {
@@ -213,32 +288,38 @@ var game = (function(){
             var available = false;
 
             // according to 8 direction
-            for (var dirIndex = 0; dirIndex < directions.length; dirIndex++) {
+            for (var dirIndex = 0; dirIndex < directions.length; dirIndex++)
+            {
                 // get neighboring cell
                 var tempCheckEmptyCell = {
-                    row: rowIndex + directions[dirIndex][0],
-                    cell: cellIndex + directions[dirIndex][1]
+                    row     : rowIndex  + directions[dirIndex][0],
+                    cell    : cellIndex + directions[dirIndex][1]
                 };
 
-                // out of area
-                if (tempCheckEmptyCell.row < 1 || tempCheckEmptyCell.row > 8
-                    || tempCheckEmptyCell.cell < 1 || tempCheckEmptyCell.cell > 8) {
+                // out of area, next direction
+                if (    tempCheckEmptyCell.row < 1  || tempCheckEmptyCell.row > 8
+                    ||  tempCheckEmptyCell.cell < 1 || tempCheckEmptyCell.cell > 8) {
                     continue;
                 }
 
-                // neighboring cell is not the reverse color
+                // neighboring cell is not the reverse color, next direction
                 if (this.cellState[tempCheckEmptyCell.row - 1][tempCheckEmptyCell.cell - 1] != this.getReverseColorNumber(colorNumber)) {
                     continue;
                 }
 
-                tempCheckEmptyCell.row += directions[dirIndex][0];
-                tempCheckEmptyCell.cell += directions[dirIndex][1];
+                // tempCheckEmptyCell.row += directions[dirIndex][0];
+                // tempCheckEmptyCell.cell += directions[dirIndex][1];
 
                 while (tempCheckEmptyCell.row >= 1 && tempCheckEmptyCell.row <= 8 &&
-                tempCheckEmptyCell.cell >= 1 && tempCheckEmptyCell.cell <= 8) {
+                        tempCheckEmptyCell.cell >= 1 && tempCheckEmptyCell.cell <= 8)
+                {
                     // has same color, it allow place current color.
                     if (this.cellState[tempCheckEmptyCell.row - 1][tempCheckEmptyCell.cell - 1] == colorNumber) {
                         return true;
+                    }
+                    // empty cell
+                    if (this.cellState[tempCheckEmptyCell.row - 1][tempCheckEmptyCell.cell - 1] == 0) {
+                        break;
                     }
 
                     tempCheckEmptyCell.row += directions[dirIndex][0];
@@ -252,25 +333,79 @@ var game = (function(){
         getReverseColorNumber: function (colorNumber) {
             return colorNumber == 1 ? 2 : 1;
         },
+        randomForward : function (stepCount)
+        {
+            var me = this;
+            var next = (function(){
+
+                var availableCells = me.availableCells;
+                var randomIndex = Math.floor(Math.random() * availableCells.length);
+                me.addPiece(availableCells[randomIndex][0], availableCells[randomIndex][1]);
+
+                    stepCount--;
+                if (stepCount > 1)
+                {
+                    window.setTimeout(next, 500);
+                }
+            });
+
+            next();
+        },
         // finish game
         finish: function () {
+
+            // counting, empty cell belong to winner
+            var black = 0;
+            var white = 0;
+            var emptyCell = 0;
+
+            for (var rowIndex=1; rowIndex<=this.verticalCellCount; rowIndex++)
+            {
+                for (var cellIndex=1; cellIndex<=this.horizontalCellCount; cellIndex++)
+                {
+                    switch (this.cellState[rowIndex-1][cellIndex-1])
+                    {
+                        case 0 : emptyCell++; break;
+                        case 1 : black++; break;
+                        case 2 : white++; break;
+                    }
+                }
+            }
+
+            if (black > white)
+            {
+                black += emptyCell;
+                this.score = [black, white];
+                alert('black win.');
+            }
+            else if (white > black)
+            {
+                white += emptyCell;
+                this.score = [black, white];
+                alert('white win.');
+            }
+            else
+            {
+                alert('tie.');
+            }
 
         },
         //
         checkActionForce : function (){
 
-            // both black and white no and action force
+            // both black and white no and action force, then finish game.
             if (this.actionForce[0] == 0 && this.actionForce[1] == 0)
             {
                 this.finish();
                 return;
             }
 
-            this.actionForce[this.colorNow] = this.availableCells;
+            // if current no any action force, then turn next.
+            // this.actionForce[this.colorNow - 1] = this.availableCells;
             if (this.availableCells.length < 1)
             {
                 this.colorNow = this.getReverseColorNumber(this.colorNow);
-                this.updateAvailableCells();
+                this.computeAvailableCells();
                 this.updateView();
             }
         },
@@ -293,46 +428,23 @@ var game = (function(){
             this.view.colorNow = this.colorNow;
             this.view.score = this.score;
         },
+        checkIfInternal : function () {
+
+        },
         computeBestCell : function () {
             var result = [];
             var bestScore = 0;
-            
+
+            for (var i=0; i<this.availableCells.length; i++)
+            {
+
+            }
+        },
+        computerCellSuperiority : function () {
+
         }
     };
 
 })();
-
-game.view = new Vue({
-    el : '#reversiGame',
-    data : {
-        horizontalCellCount : game.horizontalCellCount,
-        verticalCellCount : game.verticalCellCount,
-        cellState : game.cellState,
-        game : game,
-        colorNow : game.colorNow,
-        xCoordinate : game.xCoordinate,
-        yCoordinate : game.yCoordinate,
-        score : game.score
-    },
-    methods : {
-        update : function(){
-
-        },
-        updateCellState : function(data){
-            this.cellState = data;
-        },
-        updateAvailableCells : function (data) {
-        },
-        onDown : function (event){
-            var rowIndex = parseInt(event.currentTarget.dataset.row);
-            var cellIndex = parseInt(event.currentTarget.dataset.cell);
-            this.game.addPiece(rowIndex, cellIndex);
-        },
-        cellIsAvailable : function (rowIndex, cellIndex){
-            return this.game.canAddPiece(rowIndex, cellIndex);
-        }
-    }
-});
-
 game.init();
 

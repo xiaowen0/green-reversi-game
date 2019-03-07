@@ -23,12 +23,15 @@
     box-shadow: black 1px 1px 5px;
 
     cursor: pointer;
+
+    margin-bottom: 10px;
 }
 
 @media screen and (min-width: 640px) {
     #reversiGame .board {
         width: 22rem;
         height: 22rem;
+        margin-bottom: 20px;
     }
 }
 
@@ -168,5 +171,10 @@
 
 #reversiGame .verticalTagContainner .tag {
     padding-top: 0.75rem;
+}
+
+.scoreContainner th,
+.scoreContainner td {
+    text-align: center;
 }
 
