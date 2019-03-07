@@ -24,6 +24,12 @@
                             <input class="checkbox" type="checkbox" v-model="enableAssist"/>
                             Enable assist
                         </label>
+                        <label>
+                            <select class="selectbox" v-model="game.vsType" v-on:change="onChangeVsType">
+                                <option value="vs_player">vs player</option>
+                                <option value="vs_computer">vs computer</option>
+                            </select>
+                        </label>
                         now: {{colorNow == 1 ? 'Black' : 'White'}}
                     </div>
 
