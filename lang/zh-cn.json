@@ -12,7 +12,7 @@
   "enable_assist" : "启用辅助",
   "show_reference_score" : "显示参考分数:",
   "vs_player" : "与玩家对战",
-  "vs_computer:" : "与电脑对战",
+  "vs_computer" : "与电脑对战",
   "black_win" : "黑棋胜利",
   "white_win" : "白棋胜利",
   "tie" : "打和"
