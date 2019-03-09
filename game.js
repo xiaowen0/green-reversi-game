@@ -440,17 +440,17 @@ var game = (function(){
             {
                 black += emptyCell;
                 this.score = [black, white];
-                alert('black win.');
+                alert(parseNativeLang('black_win'));
             }
             else if (white > black)
             {
                 white += emptyCell;
                 this.score = [black, white];
-                alert('white win.');
+                alert(parseNativeLang('white_win'));
             }
             else
             {
-                alert('tie.');
+                alert(parseNativeLang('tie'));
             }
 
         },

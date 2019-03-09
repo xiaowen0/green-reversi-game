@@ -1,7 +1,7 @@
 /**
  * common function
  * dependent on jQuery
- * last update:     2018-11-22 12:00
+ * last update:     2018-12-04 16:00
  */
 
 var dependencies = ['jquery', 'bootstrap', 'boorstrapTheme'];
@@ -1255,6 +1255,45 @@ function loadScript(url, options)
     }
 
     document.body.appendChild(scriptLink);
+}
+
+/**
+ * execute script from a file
+ * @param String    url
+ * @param Function  callback
+ * -- Object|null   error   a object save error information
+ * -- String        text    script text content
+ */
+function execScript(url, callback)
+{
+    $.ajax(url, {
+        dataType : 'text',
+        success : function (text)
+        {
+            try
+            {
+                eval(text);
+            }
+            catch (e)
+            {
+                callback(e, '');
+            }
+
+            if (callback)
+            {
+                callback(null, text);
+            }
+        },
+        error : function (request, message){
+            if (callback)
+            {
+                callback({
+                    request : request,
+                    message : message
+                }, '');
+            }
+        }
+    });
 }
 
 /**
@@ -3815,3 +3854,241 @@ function initUISettingForm(form, options)
     onchange ? onchange() : null;
 }
 
+/**
+ * apply native language, default use language in current language.
+ * @param String language    native language code (lowercase), like 'zh-cn'.
+ * @param String defaultLanguage   default language when native language not supported.
+ * @param Array supportedList   list for languages supported.
+ */
+function applyNativeLanguage(language, defaultLanguage, supportedList, options)
+{
+    language = language || getBrowserLanguage() || defaultLanguage;
+    language = language.toLowerCase();
+    defaultLanguage = defaultLanguage || 'en-us';
+    supportedList = supportedList || [];
+    options = options || {};
+
+    if (language == '' || !inArray(language, supportedList))
+    {
+        language = defaultLanguage;
+    }
+
+    // load language file
+    loadLang(language, function(state){
+        if (!state)
+        {
+            log('[error] load language fail.');
+        }
+
+        $('*[data-native]').each(function()
+        {
+            var text = '';
+
+            if ($(this).attr('data-native') == '')
+            {
+                // get source key
+                text = (this.nodeName.toLowerCase() == 'input') ? $(this).attr('placeholder') : this.innerHTML;
+
+                // save source key
+                $(this).attr('data-native', text);
+            }
+            else
+            {
+                // get source key
+                text = $(this).attr('data-native');
+            }
+
+            if (text == '')
+            {
+                return;
+            }
+
+            // get native language text
+            if (typeof(window.nativeLanguage) == 'undefined')
+            {
+                window.nativeLanguage = {};
+            }
+
+            var nativeLangText = typeof(window.nativeLanguage[text]) == 'string' ?
+                window.nativeLanguage[text] : '';
+            if (!nativeLangText)
+            {
+                return;
+            }
+
+            (this.nodeName.toLowerCase() == 'input') ? $(this).attr('placeholder', nativeLangText) : this.innerHTML = nativeLangText;
+
+        }); // end elements: *[data-native] each function
+    }, options);
+}
+
+/**
+ * load a language file (json)
+ * @param String path   relative path from lang folder to destination file (needn't ext name)
+ * @param Function callback     callback, it run if success or not.
+ */
+function loadLang(path, callback, options)
+{
+    options = options || {};
+    var baseUrl = options.baseUrl || '';
+    path = baseUrl + './lang/' + path + '.json';
+    $.ajax(path, {
+        success : function (result){
+
+            if (typeof(window.nativeLanguage) == 'undefined')
+            {
+                window.nativeLanguage = {};
+            }
+
+            for (var key in result)
+            {
+                window.nativeLanguage[key] = result[key];
+            }
+
+            if (callback)
+            {
+                callback(true, result);
+            }
+        },
+        error : function (){
+            if (callback)
+            {
+                callback(false, '');
+            }
+        }
+    });
+}
+
+/**
+ * init native language
+ * get language setting from localStorage or cookie, and apply to current page.
+ * @param options
+ * (String)baseUrl : base url to lang folder
+ * (String)defaultLanguage : default language
+ * (Array)languageSupportedList : list for language support
+ * @return String   current language
+ */
+function initNativeLanguage(options)
+{
+    var baseUrl = options.baseUrl || './';
+    var defaultLanguage = options.defaultLanguage || 'en-us';
+    var languageSupportedList = options.languageSupportedList || [defaultLanguage];
+
+    var customLanguage = '';
+
+    // try to get data in local storage,
+    // but some browser not support or deny to use.
+    if (typeof(localStorage) == "object")
+    {
+        try
+        {
+            customLanguage = localStorage.getItem('language') || '';
+        }
+        catch (e)
+        {
+            log(e);
+        }
+    }
+
+    // try to get data from cookie,
+    // but some browser disable cookie.
+    if (!customLanguage)
+    {
+        try
+        {
+            customLanguage = $.cookie('language');
+        }
+        catch (e)
+        {
+            log(e);
+        }
+    }
+
+    applyNativeLanguage(customLanguage, defaultLanguage, languageSupportedList, {
+        baseUrl : baseUrl
+    });
+
+    return customLanguage;
+}
+
+/**
+ * init the language selectbox
+ * @param HTMLElement selectbox
+ * @param Object options
+ * (String)baseUrl : base url to lang folder
+ * (String)defaultLanguage : default language
+ * (String)currentLanguage : current language
+ * (String)languageSupportedList : list for language supported
+ */
+function initLanguageSelectbox(selectbox, options)
+{
+    var baseUrl = options.baseUrl || './';
+    var defaultLanguage = options.defaultLanguage || 'en-us';
+    var currentLanguage = options.currentLanguage || defaultLanguage;
+    var languageSupportedList = options.languageSupportedList || [];
+
+    $(selectbox).val(currentLanguage).on('change', function()
+    {
+        var value = this.value;
+
+        applyNativeLanguage(value, defaultLanguage, languageSupportedList, {
+            baseUrl : baseUrl
+        });
+
+        // save custom language setting.
+
+        var savedState = false;
+        // try to save language setting in local storage
+        // but some browser not support or deny to use.
+        if (typeof(localStorage) == "object")
+        {
+            try
+            {
+                localStorage.setItem('language', value);
+                savedState = true;
+            }
+            catch (e)
+            {
+                log(e);
+            }
+        }
+
+        // try to save language setting in cookie
+        // but some browser deny to use.
+        if (!savedState)
+        {
+            try
+            {
+                savedState = $.cookie('language', value);
+            }
+            catch (e)
+            {
+                log(e);
+            }
+        }
+
+    });
+}
+
+/**
+ * parse a text to native language text
+ * @param String text
+ * @return String
+ */
+function parseNativeLang(text)
+{
+    if (typeof(window.nativeLanguage) == 'undefined')
+    {
+        window.nativeLanguage = {};
+    }
+
+    for (var key in window.nativeLanguage)
+    {
+        if (key == text)
+        {
+            return window.nativeLanguage[key];
+        }
+    }
+
+    return text;
+}

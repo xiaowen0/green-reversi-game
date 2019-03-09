@@ -4,7 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="renderer" content="webkit|ie-comp|ie-stand" />
-    <title>Green Reversi Game</title>
+    <title>green_reversi_game</title>
     <link rel="stylesheet" href="style/common_style_classes/common_style_classes.css"/>
     <link rel="stylesheet" href="style/common_style_classes/common_component.css"/>
     <link rel="stylesheet" href="style.css"/>
@@ -16,12 +16,14 @@
         <div class="page_body">
             <div class="inner">
 
-                <div id="reversiGame">
+                <div class="align_right">
+                    <select class="selectbox" id="languageSelectbox">
+                        <option value="zh-cn">简体中文</option>
+                        <option value="en-us">USA English</option>
+                    </select>
+                </div>
 
-                    <div class="mb20">
-                        <button class="button green" type="button" onclick="game.startGame()">start game</button>
-                        now: {{colorNow == 1 ? 'Black' : 'White'}}
-                    </div>
+                <div id="reversiGame">
 
                     <div class="board">
 
@@ -49,7 +51,7 @@
                                     <!-- available cell -->
                                     <div v-if="cellIsAvailable(row,cell)" class="piece">
                                         <span v-if="!showReferenceScore">&times;</span>
-                                        <span class="score" v-if="showReferenceScore">{{game.cellScoreMap[row-1][cell-1]}}</span>
+                                        <span class="score" v-show="showReferenceScore">{{game.cellScoreMap[row-1][cell-1]}}</span>
                                     </div>
 
                                 </td>
@@ -58,47 +60,55 @@
 
                     </div>
 
-                    <div class="scoreContainner mb20">
-                        <table border="1" cellspacing="0" cellpadding="8">
+                    <div class="mb20 align_center">
+
+                        <button class="button green mr10" type="button" onclick="game.startGame()" data-native="">start_game</button>
+
+                        <span data-native="">game_now</span> <span data-native="" class="mr10">{{colorNow == 1 ? 'game_black' : 'game_white'}}</span>
+
+                        <label>
+                            <select class="selectbox" v-model="game.vsType" v-on:change="onChangeVsType">
+                                <option value="vs_player" data-native="">vs_player</option>
+                                <option value="vs_computer" data-native="">vs_computer</option>
+                            </select>
+                        </label>
+                    </div>
+
+                    <div class="scoreContainner mb20 align_center">
+                        <table border="1" cellspacing="0" cellpadding="8" class="centered">
                             <tr>
-                                <th>player</th>
-                                <th>score</th>
-                                <th v-if="enableAssist">action force</th>
-                                <th v-if="enableAssist">internal pieces</th>
-                                <th v-if="enableAssist">external pieces</th>
+                                <th data-native="">player</th>
+                                <th data-native="">score</th>
+                                <th data-native="" v-show="enableAssist">action_force</th>
+                                <th data-native="" v-show="enableAssist">internal_pieces</th>
+                                <th data-native="" v-show="enableAssist">external_pieces</th>
                             </tr>
                             <tr>
-                                <td>Black</td>
+                                <td data-native="">game_black</td>
                                 <td>{{score[0]}}</td>
-                                <td v-if="enableAssist">{{game.actionForce[0]}}</td>
-                                <td v-if="enableAssist"></td>
-                                <td v-if="enableAssist"></td>
+                                <td v-show="enableAssist">{{game.actionForce[0]}}</td>
+                                <td v-show="enableAssist"></td>
+                                <td v-show="enableAssist"></td>
                             </tr>
                             <tr>
-                                <td>White</td>
+                                <td data-native="">game_white</td>
                                 <td>{{score[1]}}</td>
-                                <td v-if="enableAssist">{{game.actionForce[1]}}</td>
-                                <td v-if="enableAssist"></td>
-                                <td v-if="enableAssist"></td>
+                                <td v-show="enableAssist">{{game.actionForce[1]}}</td>
+                                <td v-show="enableAssist"></td>
+                                <td v-show="enableAssist"></td>
                             </tr>
                         </table>
                     </div>
 
-                    <div>
-                        <label>
-                            <input class="checkbox" type="checkbox" v-model="enableAssist"/>
-                            Enable assist
-                        </label>
-                        <label>
-                            <input class="checkbox" type="checkbox" v-model="showReferenceScore"/>
-                            Show reference score:
-                        </label>
-                        <label>
-                            <select class="selectbox" v-model="game.vsType" v-on:change="onChangeVsType">
-                                <option value="vs_player">vs player</option>
-                                <option value="vs_computer">vs computer</option>
-                            </select>
-                        </label>
+                    <div class="align_center">
+                        <!--<label>-->
+                            <!--<input class="checkbox" type="checkbox" v-model="enableAssist"/>-->
+                            <!--<span data-native="">enable_assist</span>-->
+                        <!--</label>-->
+                        <!--<label>-->
+                            <!--<input class="checkbox" type="checkbox" v-model="showReferenceScore"/>-->
+                            <!--<span data-native="">show_reference_score</span>-->
+                        <!--</label>-->
                     </div>
 
                 </div>
@@ -115,6 +125,21 @@
     <script src="script/common_script/common_action.js"></script>
     <script src="game.js"></script>
     <script src="robot2.js"></script>
+
+    <script>
+        var defaultLanguage = 'zh-cn';
+        var languageSupported = ['zh-cn', 'en-us'];
+        var currentLanguage = initNativeLanguage({
+            defaultLanguage : defaultLanguage,
+            languageSupportedList : languageSupported
+        });
+
+        initLanguageSelectbox(getElement('languageSelectbox'), {
+            defaultLanguage : defaultLanguage,
+            currentLanguage : currentLanguage,
+            languageSupportedList : languageSupported
+        });
+    </script>
 
 </body>
 </html>
