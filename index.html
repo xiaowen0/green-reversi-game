@@ -64,7 +64,9 @@
 
                         <button class="button green mr10" type="button" onclick="game.startGame()" data-native="">start_game</button>
 
-                        <span data-native="">game_now</span> <span data-native="" class="mr10">{{colorNow == 1 ? 'game_black' : 'game_white'}}</span>
+                        <span data-native="">game_now</span>
+						<span data-native="" class="mr10" v-show="colorNow==1">game_black</span>
+						<span data-native="" class="mr10" v-show="colorNow==2">game_white</span>
 
                         <label>
                             <select class="selectbox" v-model="game.vsType" v-on:change="onChangeVsType">
