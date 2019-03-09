@@ -1,0 +1,20 @@
+{
+  "green_reversi_game" : "Green Reversi Game",
+  "start_game" : "start game",
+  "game_black" : "Black",
+  "game_white" : "White",
+  "game_now" : "now:",
+  "player" : "player",
+  "score" : "score",
+  "action_force" : "action force",
+  "internal_pieces" : "internal pieces",
+  "external_pieces" : "external pieces",
+  "enable_assist" : "Enable assist",
+  "show_reference_score" : "Show reference score:",
+  "vs_player" : "vs player",
+  "vs_computer" : "vs computer",
+  "black_win" : "black win.",
+  "white_win" : "white win.",
+  "tie" : "tie."
+
+}

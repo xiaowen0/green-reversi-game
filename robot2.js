@@ -55,7 +55,10 @@ var robot2 = {
 
         // filter best cells
 
-
+        if (!bestCell)
+        {
+            return;
+        }
         this.game.addPiece(bestCell.rowIndex, bestCell.cellIndex);
     },
     /**
