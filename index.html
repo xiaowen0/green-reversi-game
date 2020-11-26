@@ -81,9 +81,9 @@
                         </label>
 
                         <label>
-                            <select class="selectbox" v-on:change="changeRobot(robotItem)">
-                                <option value="vs_player" v-for="(robotItem, robotIndex) in robotList" data-native="">
-                                    ROBOT {{robotIndex + 1}}
+                            <select class="selectbox" v-model="robotIndex" v-on:change="changeRobot">
+                                <option :value="robotIndex" v-for="(robotItem, robotIndex) in robotList">
+                                    <span data-native="">ROBOT</span> {{robotIndex + 1}}
                                 </option>
                             </select>
                         </label>
@@ -144,6 +144,7 @@
     <script src="game.js"></script>
     <script src="robot1.js"></script>
     <script src="robot2.js"></script>
+    <script src="robot3.js"></script>
 
     <script>
         var defaultLanguage = 'zh-cn';
@@ -159,7 +160,7 @@
             languageSupportedList : languageSupported
         });
 
-        game.view.robotList = [robot1, robot2];
+        game.view.robotList = [robot1, robot2, robot3];
         game.robot = game.view.robotList[0];
     </script>
 

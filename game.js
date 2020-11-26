@@ -103,6 +103,7 @@ var game = (function(){
                     enableAssist : false,
                     showReferenceScore : false,
                     robotList : [],
+                    robotIndex : 0,
                 },
                 methods : {
                     update : function(){
@@ -125,12 +126,12 @@ var game = (function(){
                         var value = event.currentTarget.value;
                         setSessionData(this.game.id + '_vsType', value);
 
-                    }
+                    },
+                    changeRobot : function() {
+                        this.game.robot = this.robotList[this.robotIndex];
+                    },
                 }
             });
-        },
-        changeRobot : function(robot) {
-            this.robot = robot;
         },
         formatPositionCode : function(rowIndex, cellIndex) {
             return this.xCoordinate[cellIndex - 1] + this.yCoordinate[rowIndex - 1];
