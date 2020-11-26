@@ -18,3 +18,4 @@ Open the url with Browser:
 
 <a href="https://xiaowen0.github.io/green-reversi-game/">https://xiaowen0.github.io/green-reversi-game/</a>
 
+<a href="http://oschina_xiaowen.gitee.io/green-reversi-game">http://oschina_xiaowen.gitee.io/green-reversi-game</a>
