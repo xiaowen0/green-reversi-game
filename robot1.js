@@ -64,10 +64,12 @@ var robot1 = {
 
         /**
          * analysis params weight
-         * offsetToCenter  2
+         * offsetToCenter  3
          * internalCellIncrease  4
-         * externalCellIncrease  4
+         * externalCellIncrease  5
          * neighboring  2
+         * edge  4
+         * cornor  8
          */
 
         // log
@@ -79,10 +81,9 @@ var robot1 = {
             ' 附近空格' + analysis.neighboringEmptyCount;
         analysis.isEdge ? log += ' 边' : null;
         analysis.isCorner ? log += ' 角' : null;
-        addConsoleLog(log);
 
         // approach center
-        var result = (6 - analysis.offsetToCenter) * 2;
+        var result = (7 - analysis.offsetToCenter + 3) * 3;
 
         // eat least
         result += (8 - analysis.internalCellIncrease + analysis.externalCellIncrease) * 4;
@@ -90,20 +91,20 @@ var robot1 = {
         // more internal cell
         // result += analysis.internalCellIncrease;
 
-        result -= analysis.externalCellIncrease * 4;
+        result -= analysis.externalCellIncrease * 5;
 
         // least neighboring empty
-        result += 0 - 1 + (analysis.neighboringCount - analysis.neighboringEmptyCount) * 2;
-
+        // result += 0 - 1 + (analysis.neighboringCount - analysis.neighboringEmptyCount) * 2;
+        //
         if (analysis.isEdge)
         {
-            result--;
+            result -= 4;
         }
         if (analysis.isCorner)
         {
-            result += me.actionForce[color-1];
+            result += me.actionForce[color-1] * 8;
         }
-
+        //
         // check if is special cell
         if (   (rowIndex == 2 && cellIndex == 2)
             || (rowIndex == 2 && cellIndex == 7)
@@ -111,25 +112,27 @@ var robot1 = {
             || (rowIndex == 7 && cellIndex == 7)
         )
         {
-            result -= 64;
+            result -= 32;
         }
-
+        //
         // check if is last 2 line
         if ( rowIndex == 2 || rowIndex == 7
             || cellIndex == 2 || cellIndex == 7
         )
         {
-            result -= 32;
+            result -= 16;
         }
-
-        // neighboring less reverse
-        result -= (analysis.neighboringCount - analysis.neighboringReverseCount) * 2;
-
+        //
+        // // neighboring less reverse
+        // result -= (analysis.neighboringCount - analysis.neighboringReverseCount) * 2;
+        //
         // neighboring less empty
         result -= (analysis.neighboringCount - analysis.neighboringEmptyCount) + 8;
 
-        result += analysis.eatingCellScore;
+        // result += analysis.eatingCellScore;
 
+        log += '分数：'+ result;
+        addConsoleLog(log);
 
         return result;
     },

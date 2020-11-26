@@ -13,7 +13,7 @@
 </head>
 <body data-base-width="480">
 
-    <div class="page hide">
+    <div class="page">
 
         <div class="page_body">
             <div class="inner">
@@ -80,7 +80,7 @@
                         <label>
                             <select class="selectbox" v-on:change="changeRobot(robotItem)">
                                 <option value="vs_player" v-for="(robotItem, robotIndex) in robotList" data-native="">
-                                    ROBOT {{robotIndex}}
+                                    ROBOT {{robotIndex + 1}}
                                 </option>
                             </select>
                         </label>
