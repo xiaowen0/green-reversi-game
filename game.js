@@ -208,7 +208,7 @@ var game = (function(){
                 // window.setTimeout(this.computerAttack(), 700);
                 window.setTimeout(function(){
                     me.robot.run();;
-                }, 1000);
+                }, 400);
             }
 
             this.printSimpleDraftToConsole();
