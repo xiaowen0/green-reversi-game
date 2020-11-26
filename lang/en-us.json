@@ -15,5 +15,6 @@
   "vs_computer" : "vs computer",
   "black_win" : "black win.",
   "white_win" : "white win.",
-  "tie" : "tie."
+  "tie" : "tie.",
+  "ROBOT" : "robot"
 }

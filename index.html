@@ -70,8 +70,16 @@
 
                         <label>
                             <select class="selectbox" v-model="game.vsType" v-on:change="onChangeVsType">
-                                <option value="vs_player" data-native="">vs_player</option>
-                                <option value="vs_computer" data-native="">vs_computer</option>
+                                <option value="vs_player" data-native="">VS Player</option>
+                                <option value="vs_computer" data-native="">VS Computer</option>
+                            </select>
+                        </label>
+
+                        <label>
+                            <select class="selectbox" v-on:change="changeRobot(robotItem)">
+                                <option value="vs_player" v-for="(robotItem, robotIndex) in robotList" data-native="">
+                                    ROBOT {{robotIndex}}
+                                </option>
                             </select>
                         </label>
                     </div>
@@ -126,6 +134,7 @@
 
     <script src="script/common_script/common_action.js"></script>
     <script src="game.js"></script>
+    <script src="robot1.js"></script>
     <script src="robot2.js"></script>
 
     <script>
@@ -141,6 +150,9 @@
             currentLanguage : currentLanguage,
             languageSupportedList : languageSupported
         });
+
+        game.view.robotList = [robot1, robot2];
+        game.robot = game.view.robotList[0];
     </script>
 
 </body>

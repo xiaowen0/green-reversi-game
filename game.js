@@ -101,7 +101,8 @@ var game = (function(){
                     yCoordinate : me.yCoordinate,
                     score : me.score,
                     enableAssist : false,
-                    showReferenceScore : false
+                    showReferenceScore : false,
+                    robotList : [],
                 },
                 methods : {
                     update : function(){
@@ -120,11 +121,16 @@ var game = (function(){
                         return this.game.canAddPiece(rowIndex, cellIndex);
                     },
                     onChangeVsType : function (event) {
+                        // save data
                         var value = event.currentTarget.value;
                         setSessionData(this.game.id + '_vsType', value);
+
                     }
                 }
             });
+        },
+        changeRobot : function(robot) {
+            this.robot = robot;
         },
         startGame: function ()
         {
@@ -144,6 +150,8 @@ var game = (function(){
 
             // update view
             this.updateView();
+
+            this.printSimpleDraftToConsole();
         },
         /**
          * add Piece in a cell
@@ -190,14 +198,17 @@ var game = (function(){
             this.updateView();
 
             // vs computer
-            // if (this.vsType == "vs_computer" && this.colorNow == this.computerColor && typeof(this.robotApi)!=null)
-            // {
-            //     var robotApi = this.robotApi;
-            //     // window.setTimeout(this.computerAttack(), 700);
-            //     window.setTimeout(function(){
-            //         robotApi();
-            //     }, 1000);
-            // }
+            if (this.vsType == "vs_computer" && this.colorNow == this.computerColor)
+            {
+                var me = this;
+
+                // window.setTimeout(this.computerAttack(), 700);
+                window.setTimeout(function(){
+                    me.robot.run();;
+                }, 1000);
+            }
+
+            this.printSimpleDraftToConsole();
         },
         computeEatingCells : function (rowIndex, cellIndex, color)
         {
@@ -314,18 +325,18 @@ var game = (function(){
             // }
             // console.log('[info] available cells: ' + availableText);
 
-            if (this.robot)
-            {
-                var cellScoreData = [];
-                for (var i in cells) {
-                    cellScoreData.push({
-                        rowIndex : cells[i][0],
-                        cellIndex : cells[i][1],
-                        score : this.robot.computeCellSuperiority(cells[i][0], cells[i][1], this.colorNow)
-                    });
-                }
-                this.updateScoreMap(cellScoreData);
-            }
+            // if (this.robot)
+            // {
+            //     var cellScoreData = [];
+            //     for (var i in cells) {
+            //         cellScoreData.push({
+            //             rowIndex : cells[i][0],
+            //             cellIndex : cells[i][1],
+            //             score : this.robot.computeCellSuperiority(cells[i][0], cells[i][1], this.colorNow)
+            //         });
+            //     }
+            //     this.updateScoreMap(cellScoreData);
+            // }
 
             // result
             var AvailableCells = [];
@@ -516,17 +527,27 @@ var game = (function(){
             this.view.colorNow = this.colorNow;
             this.view.score = this.score;
         },
-        // computerAttack : function () {
-        //     var cell = this.computeBestCell();
-        //     this.addPiece(cell.rowIndex, cell.cellIndex);
-        // },
-        /**
-         * call the api when need rebot
-         * @param Function RebotApi
-         */
-        registerRobotApi : function (robotApi) {
-
-            this.robotApi = robotApi;
+        printSimpleDraftToConsole : function () {
+            var str = '';
+            for (var tRowIndex = 0; tRowIndex < this.cellState.length; tRowIndex++)
+            {
+                for (var tCellIndex = 0; tCellIndex < this.cellState[tRowIndex].length; tCellIndex++)
+                {
+                    switch (this.cellState[tRowIndex][tCellIndex]) {
+                        case 0 :
+                            str += '  ';
+                            break;
+                        case 1 :
+                            str += 'X ';
+                            break;
+                        case 2 :
+                            str += 'O ';
+                            break;
+                    }
+                }
+                str += "\n";
+            }
+            addConsoleLog(str);
         }
     };
 

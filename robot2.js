@@ -28,6 +28,9 @@ var robot2 = {
     run : function ()
     {
         var me = this;
+
+        this.state = 'running';
+
         var result = [];
         // object {rowIndex, cellIndex, superiority}
         var bestCell = null;
@@ -60,6 +63,8 @@ var robot2 = {
             return;
         }
         this.game.addPiece(bestCell.rowIndex, bestCell.cellIndex);
+
+        this.state = 'waiting';
     },
     /**
      * compute cell's superiority
@@ -396,9 +401,7 @@ var robot2 = {
 
             if (me.game.colorNow == me.game.computerColor && me.game.vsType == 'vs_computer' && me.state == 'waiting')
             {
-                me.state = 'running';
                 me.run();
-                me.state = 'waiting';
             }
         }, 2000);
     },
@@ -410,6 +413,6 @@ var robot2 = {
         }
     }
 };
-robot2.startWatch();
-game.robot = robot2;
+// robot2.startWatch();
+// game.robot = robot2;
 // game.registerRobotApi(robot1.run);

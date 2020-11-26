@@ -15,5 +15,6 @@
   "vs_computer" : "与电脑对战",
   "black_win" : "黑棋胜利",
   "white_win" : "白棋胜利",
-  "tie" : "打和"
+  "tie" : "和局",
+  "ROBOT" : "AI机器人"
 }
