@@ -62,19 +62,38 @@ var robot1 = {
 
         var analysis = me.analyseCell(rowIndex, cellIndex, color);
 
+        /**
+         * analysis params weight
+         * offsetToCenter  2
+         * internalCellIncrease  4
+         * externalCellIncrease  4
+         * neighboring  2
+         */
+
+        // log
+        var log = this.game.formatPositionCode(rowIndex, cellIndex) +
+            ' 中心距离' + analysis.offsetToCenter +
+            ' 增加内子' + analysis.internalCellIncrease +
+            ' 增加外子' + analysis.externalCellIncrease +
+            ' 附近格子' + analysis.neighboringCount +
+            ' 附近空格' + analysis.neighboringEmptyCount;
+        analysis.isEdge ? log += ' 边' : null;
+        analysis.isCorner ? log += ' 角' : null;
+        addConsoleLog(log);
+
         // approach center
         var result = (6 - analysis.offsetToCenter) * 2;
 
         // eat least
-        result += (8 - analysis.internalCellIncrease + analysis.externalCellIncrease) * 8;
+        result += (8 - analysis.internalCellIncrease + analysis.externalCellIncrease) * 4;
 
         // more internal cell
-        result += analysis.internalCellIncrease;
+        // result += analysis.internalCellIncrease;
 
         result -= analysis.externalCellIncrease * 4;
 
         // least neighboring empty
-        result += 0 - 1 + (analysis.neighboringCount - analysis.neighboringEmptyCount) * 8;
+        result += 0 - 1 + (analysis.neighboringCount - analysis.neighboringEmptyCount) * 2;
 
         if (analysis.isEdge)
         {
@@ -131,7 +150,7 @@ var robot1 = {
         var result = {};
 
         // analyse offset to center
-        result.offsetToCenter = Math.abs(rowIndex-4) + Math.abs(cellIndex-4);
+        result.offsetToCenter = Math.abs(rowIndex-4.5) + Math.abs(cellIndex-4.5);
 
         // check if is edge
         if (rowIndex == 1 || rowIndex == 8

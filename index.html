@@ -8,10 +8,12 @@
     <link rel="stylesheet" href="style/common_style_classes/common_style_classes.css"/>
     <link rel="stylesheet" href="style/common_style_classes/common_component.css"/>
     <link rel="stylesheet" href="style.css"/>
+
+    <script src="asset/vue.2.5.16.js"></script>
 </head>
 <body data-base-width="480">
 
-    <div class="page">
+    <div class="page hide">
 
         <div class="page_body">
             <div class="inner">
@@ -23,7 +25,7 @@
                     </select>
                 </div>
 
-                <div id="reversiGame">
+                <div id="reversiGame" v-cloak="">
 
                     <div class="board">
 
@@ -121,6 +123,10 @@
                         <!--</label>-->
                     </div>
 
+                </div><!-- end #reversiGame -->
+
+                <div>
+                    robot 1: 尽量接近中心，少吃外子，周围尽量少空格，尽量不占边，尽量占角。
                 </div>
 
             </div>
@@ -130,7 +136,6 @@
 
     <script src="script/common_script/common_function.js"></script>
     <script src="asset/jquery/jquery-3.1.0.min.js"></script>
-    <script src="asset/vue.2.5.16.js"></script>
 
     <script src="script/common_script/common_action.js"></script>
     <script src="game.js"></script>

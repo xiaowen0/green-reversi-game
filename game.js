@@ -132,6 +132,9 @@ var game = (function(){
         changeRobot : function(robot) {
             this.robot = robot;
         },
+        formatPositionCode : function(rowIndex, cellIndex) {
+            return this.xCoordinate[cellIndex - 1] + this.yCoordinate[rowIndex - 1];
+        },
         startGame: function ()
         {
             // init all cells, copy cellInitState data to cellState.
@@ -310,6 +313,14 @@ var game = (function(){
                     }
                 }
             }
+
+            // log
+            var log = '行动力：';
+            for (var i=0; i<availableCells.length; i++)
+            {
+                log += this.formatPositionCode(availableCells[i][0], availableCells[i][1]) + ' ';
+            }
+            addConsoleLog(log);
 
             return availableCells;
         },
