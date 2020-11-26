@@ -131,7 +131,7 @@ var robot1 = {
 
         // result += analysis.eatingCellScore;
 
-        log += '分数：'+ result;
+        log += ' 分数：'+ result;
         addConsoleLog(log);
 
         return result;
@@ -341,26 +341,5 @@ var robot1 = {
         }
 
         return eatingList;
-    },
-    startWatch : function ()
-    {
-        var me = this;
-        this.stopWatch();
-        this.timer = window.setInterval(function(){
-
-            if (me.game.colorNow == me.game.computerColor && me.state == 'waiting')
-            {
-                me.run();
-            }
-        }, 1000);
-    },
-    stopWatch : function ()
-    {
-        if (this.timer)
-        {
-            window.clearInterval(this.timer);
-        }
     }
 };
-// robot1.startWatch();
-// game.registerRobotApi(robot1.run);

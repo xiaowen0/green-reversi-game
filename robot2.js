@@ -392,27 +392,5 @@ var robot2 = {
         }
 
         return eatingList;
-    },
-    startWatch : function ()
-    {
-        var me = this;
-        this.stopWatch();
-        this.timer = window.setInterval(function(){
-
-            if (me.game.colorNow == me.game.computerColor && me.game.vsType == 'vs_computer' && me.state == 'waiting')
-            {
-                me.run();
-            }
-        }, 2000);
-    },
-    stopWatch : function ()
-    {
-        if (this.timer)
-        {
-            window.clearInterval(this.timer);
-        }
     }
 };
-// robot2.startWatch();
-// game.robot = robot2;
-// game.registerRobotApi(robot1.run);
